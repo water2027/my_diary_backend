@@ -1,0 +1,8 @@
+config.json
+
+.env
+
+go.sum
+
+*.log
+
