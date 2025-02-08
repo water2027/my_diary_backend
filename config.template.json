@@ -1,0 +1,15 @@
+{
+	"database": {
+		"host": "localhost",
+		"port": 3306,
+		"username": "root",
+		"password": "xxx",
+		"name": "xxx"
+	},
+	"smtp": {
+		"host": "smtp.qq.com",
+		"port": "465",
+		"username": "xxx@qq.com",
+		"password": "xxx"
+	}
+}
