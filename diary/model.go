@@ -26,7 +26,7 @@ type Diary struct {
 }
 
 type CreateDiaryRequest struct {
-	UserId   int    `json:"userId"`
+	UserId   int    `json:"-"`
 	Title    string `json:"title"`
 	Content  string `json:"content"`
 	IsPublic bool   `json:"isPublic"`
@@ -43,7 +43,7 @@ func (cdr *CreateDiaryRequest) Examine() error {
 }
 
 type GetDiaryRequest struct {
-	UserId  int `json:"userId"`
+	UserId  int `json:"-"`
 	DiaryId int `json:"diaryId"`
 }
 
@@ -64,7 +64,7 @@ type GetDiaryResponse struct {
 
 type GetDiaryNumRequest struct {
 	IsPublicSearch bool `json:"isPublicSearch"`
-	UserId         int  `json:"userId"`
+	UserId         int  `json:"-"`
 }
 
 func (gdnr *GetDiaryNumRequest) Examine() error {
@@ -80,7 +80,7 @@ type GetDiaryNumResponse struct {
 
 type GetDiaryListRequest struct {
 	IsPublicSearch bool `json:"isPublicSearch"`
-	UserId         int  `json:"userId"`
+	UserId         int  `json:"-"`
 	Offset         int  `json:"offset"`
 	Limit          int  `json:"limit"`
 }
@@ -97,7 +97,7 @@ type GetDiaryListResponse struct {
 }
 
 type UpdateDiaryRequest struct {
-	UserId  int    `json:"userId"`
+	UserId  int    `json:"-"`
 	DiaryId int    `json:"diaryId"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
@@ -117,7 +117,7 @@ func (udr *UpdateDiaryRequest) Examine() error {
 }
 
 type DeleteDiaryRequest struct {
-	UserId  int `json:"userId"`
+	UserId  int `json:"-"`
 	DiaryId int `json:"diaryId"`
 }
 

@@ -54,7 +54,7 @@ type RegisterResponse struct {
 type UpdatePasswordRequest struct {
 	Email     string `json:"email"`
 	Password  string `json:"password"`
-	Password2 string `json:"c"`
+	Password2 string `json:"password2"`
 	Code      string `json:"code"`
 }
 
@@ -84,7 +84,7 @@ func (scr *SendCodeRequest) Examine() error {
 type SendCodeResponse string
 
 type DeleteRequest struct {
-	UserId int    `json:"userId"`
+	UserId int    `json:"-"`
 	Code   string `json:"code"`
 }
 
@@ -98,7 +98,7 @@ func (dr *DeleteRequest) Examine() error {
 //
 
 type GetUserInfoRequest struct {
-	UserId int `json:"userId"`
+	UserId int `json:"-"`
 }
 
 func (gur *GetUserInfoRequest) Examine() error {
