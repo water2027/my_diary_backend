@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-type DatabaseConfig struct {
+type MysqlConfig struct {
 	Host     string `json:"host"`
 	Port     int    `json:"port"`
 	Username string `json:"username"`
@@ -14,9 +14,20 @@ type DatabaseConfig struct {
 	Name     string `json:"name"`
 }
 
+type RedisConfig struct {
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
+	Password string `json:"password"`
+}
+
+type DatabaseConfig struct {
+	MysqlConfig `json:"mysql"`
+	RedisConfig `json:"redis"`
+}
+
 type SMTPConfig struct {
 	Host     string `json:"host"`
-	Port     string    `json:"port"`
+	Port     string `json:"port"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
@@ -27,21 +38,28 @@ type Config struct {
 }
 
 var (
-	mu        sync.Mutex
-    dbConfig  DatabaseConfig
-    smtpConfig SMTPConfig
+	mu         sync.Mutex
+	mysqlConfig MysqlConfig
+	redisConfig RedisConfig
+	smtpConfig SMTPConfig
 )
 
-func GetDatabaseConfig() DatabaseConfig {
+func GetMysqlConfig() MysqlConfig {
 	mu.Lock()
 	defer mu.Unlock()
-	return dbConfig
+	return mysqlConfig
+}
+
+func GetRedisConfig() RedisConfig {
+	mu.Lock()
+	defer mu.Unlock()
+	return redisConfig
 }
 
 func GetSMTPConfig() SMTPConfig {
-    mu.Lock()
-    defer mu.Unlock()
-    return smtpConfig
+	mu.Lock()
+	defer mu.Unlock()
+	return smtpConfig
 }
 
 func loadConfig() error {
@@ -52,13 +70,15 @@ func loadConfig() error {
 	defer file.Close()
 
 	decoder := json.NewDecoder(file)
-    var appConfig Config
+	var appConfig Config
 	err = decoder.Decode(&appConfig)
 	if err != nil {
 		return err
 	}
-    dbConfig = appConfig.DatabaseConfig
-    smtpConfig = appConfig.SMTPConfig
+	dbConfig := appConfig.DatabaseConfig
+	mysqlConfig = dbConfig.MysqlConfig
+	redisConfig = dbConfig.RedisConfig
+	smtpConfig = appConfig.SMTPConfig
 	return nil
 }
 

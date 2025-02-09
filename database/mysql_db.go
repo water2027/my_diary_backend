@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS users (
 func initMysqlDB() error {
 	var err error
 	once.Do(func() {
-		var mysqlConfig = config.GetDatabaseConfig()
+		var mysqlConfig = config.GetMysqlConfig()
 		dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true", mysqlConfig.Username, mysqlConfig.Password, mysqlConfig.Host, mysqlConfig.Port, mysqlConfig.Name)
 		db, err = sql.Open("mysql", dsn)
 		if err != nil {
