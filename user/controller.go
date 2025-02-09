@@ -1,7 +1,11 @@
 package user
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
+
+	"context"
 
 	"my_diary/dto"
 	"my_diary/model"
@@ -52,7 +56,11 @@ func register(c *gin.Context) {
 		dto.ErrorResponse(c, dto.WithMessage(err.Error()))
 		return
 	}
-	registerResp, err := RegisterService(registerReq)
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 5 * time.Second)
+	defer cancel()
+
+	registerResp, err := RegisterService(ctx, registerReq)
 	if err != nil {
 		dto.ErrorResponse(c, dto.WithMessage(err.Error()))
 		return
@@ -68,7 +76,11 @@ func updatePassword(c *gin.Context) {
 		dto.ErrorResponse(c, dto.WithMessage(err.Error()))
 		return
 	}
-	err = UpdatePasswordService(updatePasswordReq)
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 5 * time.Second)
+	defer cancel()
+
+	err = UpdatePasswordService(ctx, updatePasswordReq)
 	if err != nil {
 		dto.ErrorResponse(c, dto.WithMessage(err.Error()))
 		return
@@ -97,9 +109,14 @@ func deleteUser(c *gin.Context) {
 		dto.ErrorResponse(c, dto.WithMessage(err.Error()))
 		return
 	}
-	err = DeleteService(deleteReq)
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 5 * time.Second)
+	defer cancel()
+
+	err = DeleteService(ctx, deleteReq)
 	if err != nil {
 		dto.ErrorResponse(c, dto.WithMessage(err.Error()))
+		return
 	}
 	dto.SuccessResponse(c, dto.WithMessage("感谢您的使用，希望我们还能再见！"))
 }
@@ -117,7 +134,11 @@ func sendCode(c *gin.Context) {
 		dto.ErrorResponse(c, dto.WithMessage(err.Error()))
 		return
 	}
-	err = SendCodeService(sendCodeReq)
+
+	ctx, cancel := context.WithTimeout(c.Request.Context(), 5 * time.Second)
+	defer cancel()
+
+	err = SendCodeService(ctx, sendCodeReq)
 	if err != nil {
 		dto.ErrorResponse(c, dto.WithMessage(err.Error()))
 		return

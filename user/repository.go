@@ -1,8 +1,10 @@
 package user
 
 import (
+	"context"
 	"errors"
 	"my_diary/database"
+	"time"
 )
 
 type userHandler interface {
@@ -100,4 +102,18 @@ func (user *userModel) deleteUser() error {
 		return err
 	}
 	return nil
+}
+
+func setCode(ctx context.Context, email, code string, expiry time.Duration) error {
+	err := database.SetValue(ctx, email, code, expiry)
+	return err
+}
+
+func getCode(ctx context.Context, email string) (string, error) {
+	code, err := database.GetValue(ctx, email)
+	return code, err
+}
+
+func deleteCode(ctx context.Context, email string) error {
+	return database.DeleteValue(ctx, email)
 }

@@ -138,6 +138,7 @@ func deleteDiary(c *gin.Context) {
 	defer utils.LogError(&err)
 	if err != nil {
 		dto.ErrorResponse(c, dto.WithMessage(err.Error()))
+		return
 	}
 
 	userId, exists := c.Get("userId")

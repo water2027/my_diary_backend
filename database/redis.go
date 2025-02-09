@@ -31,3 +31,7 @@ func GetValue(ctx context.Context, key string) (string, error) {
 	return client.Get(ctx, key).Result()
 }
 
+func DeleteValue(ctx context.Context, key string) error {
+	return client.Del(ctx, key).Err()
+}
+

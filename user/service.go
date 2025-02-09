@@ -2,6 +2,9 @@ package user
 
 import (
 	"errors"
+	"time"
+
+	"context"
 
 	"my_diary/utils"
 )
@@ -29,10 +32,17 @@ func LoginService(loginReq LoginRequest) (LoginResponse, error) {
 	return loginResp, nil
 }
 
-func RegisterService(registerReq RegisterRequest) (RegisterResponse, error) {
+func RegisterService(ctx context.Context, registerReq RegisterRequest) (RegisterResponse, error) {
 	var registerResp RegisterResponse
 	var err error
 	// TODO: 数据库查询Code是否正确
+	code, err := getCode(ctx, registerReq.Email)
+	if err != nil {
+		return registerResp, errors.New("验证码过期")
+	}
+	if code != registerReq.Code {
+		return registerResp, errors.New("验证码错误")
+	}
 	user := userModel{
 		userEmail: registerReq.Email,
 		username:  registerReq.Username,
@@ -68,11 +78,19 @@ func RegisterService(registerReq RegisterRequest) (RegisterResponse, error) {
 	registerResp.UserEmail = user.userEmail
 	registerResp.Username = user.username
 	registerResp.Token = token
+	deleteCode(ctx, user.userEmail)
 	return registerResp, nil
 }
 
-func UpdatePasswordService(updatePasswordReq UpdatePasswordRequest) error {
+func UpdatePasswordService(ctx context.Context, updatePasswordReq UpdatePasswordRequest) error {
 	// TODO: 数据库查询Code是否正确
+	code, err := getCode(ctx, updatePasswordReq.Email)
+	if err != nil {
+		return errors.New("验证码过期")
+	}
+	if code != updatePasswordReq.Code {
+		return errors.New("验证码错误")
+	}
 	user := userModel{
 		userEmail: updatePasswordReq.Email,
 	}
@@ -90,20 +108,33 @@ func UpdatePasswordService(updatePasswordReq UpdatePasswordRequest) error {
 	if err != nil {
 		return err
 	}
+	deleteCode(ctx, user.userEmail)
 	return nil
 }
 
-func DeleteService(deleteReq DeleteRequest) error {
+func DeleteService(ctx context.Context, deleteReq DeleteRequest) error {
 	user := userModel{
 		userId: deleteReq.UserId,
 	}
 	var store userHandler = &user
-	err := store.deleteUser()
-	
+	hasFound := store.findUser()
+	if !hasFound {
+		return errors.New("未找到用户")
+	}
+
+	code, err := getCode(ctx, user.userEmail)
+	if err != nil {
+		return errors.New("请发送验证码")
+	}
+	if code != deleteReq.Code {
+		return errors.New("验证码错误")
+	}
+	err = store.deleteUser()
+	deleteCode(ctx, user.userEmail)
 	return err
 }
 
-func SendCodeService(sendCodeReq SendCodeRequest) error {
+func SendCodeService(ctx context.Context, sendCodeReq SendCodeRequest) error {
 	code := utils.GetRandomCode()
 	body := "您的验证码是：" + code
 	err := utils.SendMail(sendCodeReq.Email, "diary验证码", body)
@@ -111,7 +142,8 @@ func SendCodeService(sendCodeReq SendCodeRequest) error {
 		return err
 	}
 	// TODO: 将验证码存入数据库
-	return nil
+	err = setCode(ctx, sendCodeReq.Email, code, time.Minute * 5)
+	return err
 }
 
 func GetUserInfoService(getUserInfoReq GetUserInfoRequest) (GetUserInfoResponse, error) {
