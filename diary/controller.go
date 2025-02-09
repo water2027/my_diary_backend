@@ -8,6 +8,7 @@ import (
 	"my_diary/dto"
 	"my_diary/model"
 	"my_diary/utils"
+	"my_diary/constant"
 )
 
 func RegisterRoutes(r *gin.RouterGroup) {
@@ -32,7 +33,7 @@ func createDiary(c *gin.Context) {
 	
 	userId, exists := c.Get("userId")
 	if !exists {
-		dto.ErrorResponse(c, dto.WithMessage("未登录"))
+		dto.ErrorResponse(c, dto.WithMessage("未登录"), dto.WithCode(constant.NeedLogin))
 		return
 	}
 	createDiaryReq.UserId = userId.(int)
@@ -114,7 +115,7 @@ func updateDiary(c *gin.Context) {
 
 	userId, exists := c.Get("userId")
 	if !exists {
-		dto.ErrorResponse(c, dto.WithMessage("未登录"))
+		dto.ErrorResponse(c, dto.WithMessage("未登录"), dto.WithCode(constant.NeedLogin))
 		return
 	}
 	updateDiaryReq.UserId = userId.(int)
@@ -143,7 +144,7 @@ func deleteDiary(c *gin.Context) {
 
 	userId, exists := c.Get("userId")
 	if !exists {
-		dto.ErrorResponse(c, dto.WithMessage("未登录"))
+		dto.ErrorResponse(c, dto.WithMessage("未登录"), dto.WithCode(constant.NeedLogin))
 		return
 	}
 	deleteDiaryReq.UserId = userId.(int)

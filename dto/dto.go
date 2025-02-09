@@ -1,9 +1,9 @@
 package dto
 
 import (
-	"log"
-
 	"github.com/gin-gonic/gin"
+
+	"my_diary/constant"
 )
 
 // 约定code
@@ -14,7 +14,7 @@ import (
 
 type Response struct {
 	Message string `json:"message"`
-	Code	int `json:"code"`
+	Code	constant.ResponseCode `json:"code"`
 	Data    interface{} `json:"data"`
 }
 
@@ -26,7 +26,7 @@ func WithMessage(message string) ResponseOptions {
 	}
 }
 
-func WithCode(code int) ResponseOptions {
+func WithCode(code constant.ResponseCode) ResponseOptions {
 	return func(r *Response) {
 		r.Code = code
 	}
@@ -41,20 +41,19 @@ func WithData(data interface{}) ResponseOptions {
 func SuccessResponse(c *gin.Context, opts ...ResponseOptions) {
 	response := Response{
 		Message: "success",
-		Code: 100,
+		Code: constant.Success,
 		Data: nil,
 	}
 	for _, opt := range opts {
 		opt(&response)
 	}
 	c.JSON(200, response)
-	log.Println(response.Data)
 }
 
 func ErrorResponse(c *gin.Context, opts ...ResponseOptions) {
 	response := Response{
 		Message: "error",
-		Code: 0,
+		Code: constant.Fail,
 		Data: nil,
 	}
 	for _, opt := range opts {

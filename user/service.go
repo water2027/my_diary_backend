@@ -35,7 +35,6 @@ func LoginService(loginReq LoginRequest) (LoginResponse, error) {
 func RegisterService(ctx context.Context, registerReq RegisterRequest) (RegisterResponse, error) {
 	var registerResp RegisterResponse
 	var err error
-	// TODO: 数据库查询Code是否正确
 	code, err := getCode(ctx, registerReq.Email)
 	if err != nil {
 		return registerResp, errors.New("验证码过期")
@@ -83,7 +82,6 @@ func RegisterService(ctx context.Context, registerReq RegisterRequest) (Register
 }
 
 func UpdatePasswordService(ctx context.Context, updatePasswordReq UpdatePasswordRequest) error {
-	// TODO: 数据库查询Code是否正确
 	code, err := getCode(ctx, updatePasswordReq.Email)
 	if err != nil {
 		return errors.New("验证码过期")
@@ -141,7 +139,6 @@ func SendCodeService(ctx context.Context, sendCodeReq SendCodeRequest) error {
 	if err != nil {
 		return err
 	}
-	// TODO: 将验证码存入数据库
 	err = setCode(ctx, sendCodeReq.Email, code, time.Minute * 5)
 	return err
 }
