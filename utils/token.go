@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"log"
 	"strings"
 	"time"
 
@@ -47,6 +48,7 @@ func ParseToken(tokenStr string) int {
 	if err != nil {
 		return 0
 	}
+	log.Println("asd")
 	// 断言 Claims 类型并校验 token 有效性
 	claims, ok := token.Claims.(*customClaims)
 	if !ok {

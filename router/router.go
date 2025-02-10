@@ -9,6 +9,7 @@ import (
 )
 
 func initRoutes(r *gin.RouterGroup) {
+	// r.OPTIONS("/*path", middleware.CorsMiddleware())
 	user.RegisterRoutes(r)
 	diary.RegisterRoutes(r)
 }
@@ -16,8 +17,8 @@ func initRoutes(r *gin.RouterGroup) {
 func RouterHelper() *gin.Engine {
 	r := gin.Default()
 	router := r.Group("/diary")
-	router.Use(middleware.AuthMiddleware())
 	router.Use(middleware.CorsMiddleware())
+	router.Use(middleware.AuthMiddleware())
 	initRoutes(router)
 	return r
 }
